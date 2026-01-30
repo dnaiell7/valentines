@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Be My Valentine?</title>
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      transition: background 0.5s;
+      position: relative;
+    }
+
+    .card {
+      background: white;
+      padding: 40px 50px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      animation: popIn 1s ease forwards;
+      position: relative;
+      z-index: 10;
+      transition: transform 0.3s;
+    }
+
+    h1 { margin-bottom: 10px; }
+    #countdown { font-size: 18px; margin-bottom: 10px; color: #ff4d6d; font-weight: bold; }
+    #hint { color: #ff4d6d; min-height: 20px; margin-bottom: 15px; }
+    .buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    button { padding: 12px 22px; font-size: 16px; border: none; border-radius: 10px; cursor: pointer; transition: transform 0.2s; }
+    button:hover { transform: scale(1.1); }
+    #yes { background: #ff4d6d; color: white; }
+    #no { background: #ddd; }
+
+    .heart {
+      position: absolute;
+      font-size: 20px;
+      animation: float 6s linear infinite;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Music hosted on GitHub (replace the URL with your raw file URL) -->
+  <audio id="music" src="https://raw.githubusercontent.com/YOURUSERNAME/YOURREPO/main/music.mp3" loop></audio>
+
+  <div class="card">
+    <h1>dani will you be my valentine? (and gf)</h1>
+    <div id="countdown"></div>
+    <p id="hint"></p>
+    <div class="buttons">
+      <button id="yes">Yes</button>
+      <button id="no">No</button>
+    </div>
+  </div>
+
+  <script>
+    const music = document.getElementById("music");
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const countdownEl = document.getElementById("countdown");
+    const hint = document.getElementById("hint");
+    const card = document.querySelector(".card");
+
+    let noScale = 1;
+
+    // Play music on first interaction (desktop & mobile)
+    function playMusic() { music.play().catch(()=>{}); }
+    document.body.addEventListener("click", playMusic, { once: true });
+    document.body.addEventListener("touchstart", playMusic, { once: true });
+
+    // Countdown
+    function updateCountdown() {
+      const valentines = new Date("February 14, 2026 00:00:00");
+      const now = new Date();
+      const diff = valentines - now;
+      if (diff <= 0) { countdownEl.textContent = "It's Valentine's Day 💘"; return; }
+      const days = Math.floor(diff / (1000*60*60*24));
+      const hours = Math.floor((diff / (1000*60*60)) % 24);
+      const minutes = Math.floor((diff / (1000*60)) % 60);
+      const seconds = Math.floor((diff/1000)%60);
+      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s until Valentine’s Day 💕`;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // No button
+    function blockNo() {
+      hint.textContent = "wrong button punk";
+      noScale -= 0.12;
+      if (noScale < 0.15) noScale = 0.15;
+      noBtn.style.transform = `scale(${noScale})`;
+    }
+    noBtn.addEventListener("click", e=>{ e.preventDefault(); blockNo(); });
+    noBtn.addEventListener("mouseover", blockNo);
+    noBtn.addEventListener("touchstart", blockNo);
+
+    // Floating hearts
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "❤️";
+      heart.style.left = Math.random()*100 + "vw";
+      heart.style.fontSize = Math.random()*20 + 15 + "px";
+      document.body.appendChild(heart);
+      setTimeout(()=>heart.remove(),6000);
+    }
+    setInterval(createHeart, 300);
+
+    // Celebration hearts
+    function celebrationHearts() {
+      for(let i=0;i<50;i++){
+        setTimeout(()=>{
+          const heart = document.createElement("div");
+          heart.className="heart";
+          heart.textContent="💖";
+          heart.style.left=Math.random()*100+"vw";
+          heart.style.fontSize=Math.random()*30+20+"px";
+          document.body.appendChild(heart);
+          setTimeout(()=>heart.remove(),4000);
+        }, i*50);
+      }
+    }
+
+    // Yes button
+    yesBtn.addEventListener("click", ()=>{
+      playMusic(); // ensure music playing
+      card.style.transform="scale(1.2)";
+      document.body.style.background="#ffe6eb";
+      celebrationHearts();
+      setTimeout(()=>{
+        card.style.transform="scale(1)";
+        document.body.style.background="linear-gradient(135deg, #ffdde1, #ee9ca7)";
+      },2000);
+      card.innerHTML=`
+        <h1>YAY I LOVE U SO MUCH</h1>
+        <p>now call me so i know it works</p>
+      `;
+    });
+  </script>
+</body>
+</html>
